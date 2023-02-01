@@ -1,5 +1,5 @@
 import pygame as pg
-import requests
+import pygame_gui
 import yandex_api_library
 from io import BytesIO
 
@@ -9,6 +9,11 @@ class MapApp:
         pg.init()
         self.screen = pg.display.set_mode(size)
         self.running = True
+        self.manager = pygame_gui.UIManager(self.screen.get_size())
+        self.clock = pg.time.Clock()
+        self.droplist = pygame_gui.elements.UIDropDownMenu(['map', 'sat', 'sat,skl'], 'map', pg.Rect(550, 10, 90, 25),
+                                                           self.manager)
+
         self.map = None
         self.z = 0
         self.long = 0
@@ -47,15 +52,24 @@ class MapApp:
                 self.lat = max(-85, self.lat - self.DELTA / 2 ** self.z)
             self.update_map()
 
+    def gui_handler(self, event):
+        if event.type == pygame_gui.UI_DROP_DOWN_MENU_CHANGED:
+            self.layer = event.text
+            self.update_map()
+
     def run(self):
         while self.running:
+            time_delta = self.clock.tick(60) / 1000.0
             for event in pg.event.get():
                 if event.type == pg.QUIT:
                     self.running = False
-                else:
-                    self.key_handler(event)
+                self.key_handler(event)
+                self.manager.process_events(event)
+                self.gui_handler(event)
+            self.manager.update(time_delta)
             self.screen.fill('black')
             self.screen.blit(self.map, (0, 0))
+            self.manager.draw_ui(self.screen)
             pg.display.flip()
 
 
