@@ -1,5 +1,4 @@
 import pygame as pg
-import requests
 import yandex_api_library
 from io import BytesIO
 
@@ -31,16 +30,6 @@ class MapApp:
                 self.z = min(20, self.z + 1)
             elif event.key == pg.K_PAGEDOWN:
                 self.z = max(0, self.z - 1)
-            elif event.key == pg.K_LEFT:
-                bk = self.long
-                self.long -= self.DELTA + (15 - self.z) * 0.005
-            elif event.key == pg.K_RIGHT:
-                bk = self.long
-                self.long -= self.DELTA + (15 - self.z) * 0.005
-            elif event.key == pg.K_UP:
-                self.lat += self.DELTA
-            elif event.key == pg.K_DOWN:
-                self.lat -= self.DELTA
             self.update_map()
 
     def run(self):
